@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String            @id @default(cuid())
+  name            String?
+  email           String            @unique
+  password_hash   String
+  role            String            @default("CUSTOMER")
+  phone_number    String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  classesAttended ClassAttendance[] @relation("UserAttendances")
+  classesTaught   ClassSchedule[]   @relation("TrainerClasses")
+  memberships     Membership[]
+  retailSalesMade RetailSale[]      @relation("StaffSales")
+  retailPurchases RetailSale[]      @relation("UserPurchases")
+}
+
+model Membership {
+  id             String            @id @default(cuid())
+  userId         String
+  planId         String?
+  status         String            @default("PENDING")
+  health_metrics String?
+  startDate      DateTime?
+  endDate        DateTime?
+  feeAmount      Float             @default(0)
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  plan           SubscriptionPlan? @relation(fields: [planId], references: [id])
+  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments       Payment[]
+}
+
+model Payment {
+  id               String     @id @default(cuid())
+  membershipId     String
+  amount           Float
+  paymentStatus    String     @default("UNPAID")
+  paymentMethod    String?
+  splitCash        Float?
+  splitGpay        Float?
+  dueDate          DateTime
+  lastNotifiedDate DateTime?
+  waTemplateId     String?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  membership       Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+}
+
+model ClassSchedule {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  trainerId   String
+  startTime   DateTime
+  endTime     DateTime
+  capacity    Int               @default(20)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  attendances ClassAttendance[]
+  trainer     User              @relation("TrainerClasses", fields: [trainerId], references: [id])
+}
+
+model ClassAttendance {
+  id              String        @id @default(cuid())
+  classScheduleId String
+  userId          String
+  status          String        @default("BOOKED")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  user            User          @relation("UserAttendances", fields: [userId], references: [id], onDelete: Cascade)
+  classSchedule   ClassSchedule @relation(fields: [classScheduleId], references: [id], onDelete: Cascade)
+
+  @@unique([classScheduleId, userId])
+}
+
+model RetailItem {
+  id         String       @id @default(cuid())
+  name       String
+  category   String
+  price      Float
+  stockCount Int          @default(0)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  sales      RetailSale[]
+}
+
+model RetailSale {
+  id           String     @id @default(cuid())
+  retailItemId String
+  quantity     Int        @default(1)
+  totalAmount  Float
+  userId       String?
+  soldById     String
+  createdAt    DateTime   @default(now())
+  soldBy       User       @relation("StaffSales", fields: [soldById], references: [id])
+  user         User?      @relation("UserPurchases", fields: [userId], references: [id])
+  retailItem   RetailItem @relation(fields: [retailItemId], references: [id])
+}
+
+model Equipment {
+  id              String    @id @default(cuid())
+  name            String
+  serialNumber    String?
+  status          String    @default("OPERATIONAL")
+  nextMaintenance DateTime?
+  lastMaintenance DateTime?
+  notes           String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model SubscriptionPlan {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  entryFee    Float        @default(0)
+  monthlyFee  Float
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  memberships Membership[]
+}
+
+model Integration {
+  id        String   @id @default(cuid())
+  provider  String   @unique // e.g. "DROPBOX" or "GOOGLE_DRIVE"
+  token     String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
