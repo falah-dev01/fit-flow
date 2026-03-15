@@ -81,8 +81,10 @@ export default async function InvoicePage({ params }: { params: Promise<{ id: st
                     <tbody className="divide-y divide-slate-100">
                         <tr>
                             <td className="py-4">
-                                <p className="text-sm font-medium text-slate-900">Monthly Gym Membership Fee</p>
-                                <p className="text-xs text-slate-500 mt-1">Access to all facilities and standard classes.</p>
+                                <p className="text-sm font-medium text-slate-900">{payment.description || 'Monthly Gym Membership Fee'}</p>
+                                <p className="text-xs text-slate-500 mt-1">
+                                    {payment.description ? 'Custom charge or manual fee collection.' : 'Access to all facilities and standard classes.'}
+                                </p>
                             </td>
                             <td className="py-4 text-right align-top">
                                 <p className="text-sm font-medium text-slate-900">₹{payment.amount.toFixed(2)}</p>

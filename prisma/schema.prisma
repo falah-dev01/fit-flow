@@ -47,6 +47,7 @@ model Payment {
   paymentMethod    String?
   splitCash        Float?
   splitGpay        Float?
+  description      String?    // For custom fees (Locker, Late fees, etc.)
   dueDate          DateTime
   lastNotifiedDate DateTime?
   waTemplateId     String?

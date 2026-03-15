@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Search, UserPlus, CheckCircle2, XCircle, Users } from 'lucide-react';
-import { EditMemberButton, DeleteMemberButton, RenewMemberButton } from '@/components/ActionButtons';
+import { EditMemberButton, DeleteMemberButton, RenewMemberButton, CustomFeeButton } from '@/components/ActionButtons';
 
 export default function MembersTableClient({ initialMembers }: { initialMembers: any[] }) {
     const [searchQuery, setSearchQuery] = useState('');
@@ -134,6 +134,7 @@ export default function MembersTableClient({ initialMembers }: { initialMembers:
                                     </td>
                                     <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                                         <div className="flex justify-end gap-2">
+                                            <CustomFeeButton memberId={member.memberships?.[0]?.id || member.id} />
                                             <RenewMemberButton id={member.id} />
                                             <EditMemberButton id={member.id} />
                                             <DeleteMemberButton id={member.id} />
