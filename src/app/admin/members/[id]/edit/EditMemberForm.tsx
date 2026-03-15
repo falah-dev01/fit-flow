@@ -58,7 +58,7 @@ export default function EditMemberForm({ user, plans }: { user: any, plans: any[
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">WhatsApp Number</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
                     <input
                         type="tel"
                         className="block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-900 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none"
