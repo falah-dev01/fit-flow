@@ -6,3 +6,4 @@ build/
 .env.local
 .DS_Store
 prisma/*.db*
+FitFlow_All_Code*.txt
